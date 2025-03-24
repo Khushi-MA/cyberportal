@@ -2,11 +2,14 @@ import re
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
 
+# Password validation function
 def validate_password_strength(password):
     if not password:
         return
-        
+    
     if len(password) < 8:
         raise ValidationError('Password must be at least 8 characters long.')
     if not re.search(r'[A-Z]', password):
@@ -18,6 +21,7 @@ def validate_password_strength(password):
     if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
         raise ValidationError('Password must contain at least one special character.')
 
+# Custom User Model
 class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     phone_number = models.CharField(max_length=15, unique=True)
@@ -33,7 +37,7 @@ class CustomUser(AbstractUser):
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='customuser_set',
+        related_name='customuser_permissions_set',
         blank=True,
         help_text='Specific permissions for this user.',
         verbose_name='user permissions',
@@ -42,10 +46,37 @@ class CustomUser(AbstractUser):
     def save(self, *args, **kwargs):
         if self.password:
             validate_password_strength(self.password)
+            self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
+# Newsletter Subscriber Model
 class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True)
     subscribed_at = models.DateTimeField(auto_now_add=True)
 
-# Create your models here.
+# FIR Model
+class FIR(models.Model):
+    CRIME_TYPES = [
+        ('Cyber', 'Cyber'),
+        ('Physical', 'Physical'),
+    ]
+    
+    CRIME_CATEGORIES = [
+        ('Robbery', 'Robbery'),
+        ('Molestation', 'Molestation'),
+        ('Fraud', 'Fraud'),
+        ('Other', 'Other'),
+    ]
+    
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    crime_type = models.CharField(max_length=10, choices=CRIME_TYPES)
+    crime_category = models.CharField(max_length=20, choices=CRIME_CATEGORIES)
+    other_crime = models.CharField(max_length=100, blank=True)
+    description = models.TextField()
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    citizenship = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"FIR {self.id} - {self.crime_type} - {self.crime_category}"

@@ -9,4 +9,5 @@ urlpatterns = [
     path('subscribe/', views.subscribe, name='subscribe'),
     path('contact/', views.contact, name='contact'),
     path('logout/', LogoutView.as_view(next_page='home'), name='logout'),
+    path('register_fir/', views.register_fir, name='register_fir'),
 ]

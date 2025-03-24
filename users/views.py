@@ -47,20 +47,14 @@ def user_login(request):
             return render(request, 'user_login.html', {'form': form})
         
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            logger.info(f"Form is valid, attempting to authenticate user: {username}")
+            logger.info(f"Form is valid, attempting to authenticate user: {email}")
             
-            try:
-                user = CustomUser.objects.get(email=username)
-                user = authenticate(request, username=user.username, password=password)
-            except CustomUser.DoesNotExist:
-                logger.error(f"User with email {username} not found")
-                form.add_error(None, "Email not registered, please sign up below")
-                return render(request, 'user_login.html', {'form': form})
-            
+            user = authenticate(request, username=email, password=password)
+
             if user is not None:
-                logger.info(f"User {username} authenticated successfully")
+                logger.info(f"User {email} authenticated successfully")
                 login(request, user)
                 return redirect('home')
             else:
@@ -105,4 +99,22 @@ def contact(request):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+@login_required
+def register_fir(request):
+    if request.method == 'POST':
+        # Handle form submission
+        crime_type = request.POST.get('crimeType')
+        crime = request.POST.get('flexRadioDefault')
+        other_crime = request.POST.get('otherCrime')
+        description = request.POST.get('crimeDescription')
+        name = request.POST.get('donation-name')
+        email = request.POST.get('donation-email')
+        citizenship = request.POST.get('DonationPayment')
+        
+        # Add your logic to save the FIR
+        # Redirect after successful submission
+        return redirect('home')
+        
+    return render(request, 'register_fir.html')
 

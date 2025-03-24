@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
+AUTH_USER_MODEL = 'users.CustomUser'  # Ensure Django knows about CustomUser
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -126,8 +129,10 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_IMAGES_URL = MEDIA_URL + 'images/'
-MEDIA_IMAGES_ROOT = os.path.join(MEDIA_ROOT, 'images/')
+# MEDIA_IMAGES_URL = MEDIA_URL + 'images/'
+# MEDIA_IMAGES_ROOT = os.path.join(MEDIA_ROOT, 'images/')
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
