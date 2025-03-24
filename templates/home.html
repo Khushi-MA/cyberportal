@@ -114,9 +114,7 @@
 
                       <li class="nav-item">
                           {% if user.is_authenticated %}
-                              <a class="nav-link" href="{% url 'logout' %}">
-                                  Welcome, {{ user.username }} (Logout)
-                              </a>
+                              <a class="nav-link" href="{% url 'logout' %}">Logout ({{ user.username }})</a>
                           {% else %}
                               <a class="nav-link" href="{% url 'user_login' %}">Login</a>
                           {% endif %}
@@ -189,7 +187,13 @@
                     <div class="row">
 
                         <div class="col-lg-10 col-12 text-center mx-auto">
-                            <h2 class="mb-5">{{ welcome_message }}</h2>
+                            <h2 class="mb-5">
+                                {% if user.is_authenticated %}
+                                    Welcome, {{ user.username }}!
+                                {% else %}
+                                    Welcome
+                                {% endif %}
+                            </h2>
                         </div>
 
                         <div class="col-lg-3 col-md-6 col-12 mb-4 mb-lg-0">
@@ -917,7 +921,7 @@
                     <div class="col-lg-4 col-md-6 col-12 mb-4">
                         <h5 class="site-footer-title mb-3">Quick Links</h5>
 
-                        <ul class="footer-menu">
+                        <ul class="footer-menu"></ul>
                             <li class="footer-menu-item"><a href="#" class="footer-menu-link">Our Story</a></li>
 
                             <li class="footer-menu-item"><a href="#" class="footer-menu-link">Newsroom</a></li>
