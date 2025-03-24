@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <!-- CSS FILES -->
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="row min-vh-100 justify-content-center align-items-center">
+            <div class="col-lg-5">
+                <div class="form-wrap border rounded p-4">
+                    <h1>Sign Up</h1>
+                    <p>Please fill in this form to create an account</p>
+                    <!-- form starts here -->
+                    <form method="post" novalidate class="needs-validation">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" id="username" 
+                                   pattern="^[a-zA-Z0-9_]{3,20}$"
+                                   title="Username must be 3-20 characters and can contain letters, numbers and underscore"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please choose a valid username (3-20 characters, letters, numbers and underscore only).
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email" id="email"
+                                   pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                                   title="Please enter a valid email address"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phone_number" class="form-label">Phone Number</label>
+                            <input type="text" class="form-control" name="phone_number" id="phone_number"
+                                   pattern="^[0-9]{10}$"
+                                   title="Please enter a valid 10-digit phone number"
+                                   required>
+                            <div class="invalid-feedback">
+                                Please enter a valid 10-digit phone number.
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" id="password"
+                                   pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                                   title="Must contain at least one number, one uppercase and lowercase letter, one special character, and at least 8 characters"
+                                   required>
+                            <div class="invalid-feedback" id="password-requirements">
+                                Password must contain:
+                                <ul>
+                                    <li>At least 8 characters</li>
+                                    <li>One uppercase letter</li>
+                                    <li>One lowercase letter</li>
+                                    <li>One number</li>
+                                    <li>One special character</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <input type="submit" class="btn btn-primary form-control" value="Sign Up">
+                        </div>
+                        <p class="mb-0">Already have an account? <a href="{% url 'user_login' %}">Log In</a></p>
+                    </form>
+                    <!-- form ends here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('.needs-validation');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const usernameInput = document.getElementById('username');
+            const phoneInput = document.getElementById('phone_number');
+
+            function validateEmail(email) {
+                return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
+            }
+
+            function validatePassword(password) {
+                return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
+            }
+
+            function validateUsername(username) {
+                return /^[a-zA-Z0-9_]{3,20}$/.test(username);
+            }
+
+            function validatePhone(phone) {
+                return /^[0-9]{10}$/.test(phone);
+            }
+
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity() || 
+                    !validateEmail(emailInput.value) || 
+                    !validatePassword(passwordInput.value) ||
+                    !validateUsername(usernameInput.value) ||
+                    !validatePhone(phoneInput.value)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            });
+
+            // Real-time validation
+            [
+                {input: emailInput, validator: validateEmail},
+                {input: passwordInput, validator: validatePassword},
+                {input: usernameInput, validator: validateUsername},
+                {input: phoneInput, validator: validatePhone}
+            ].forEach(({input, validator}) => {
+                input.addEventListener('input', function() {
+                    if (validator(this.value)) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
