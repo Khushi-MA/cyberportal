@@ -105,8 +105,7 @@ def register_fir(request):
     if request.method == 'POST':
         # Handle form submission
         crime_type = request.POST.get('crimeType')
-        crime_category = request.POST.get('flexRadioDefault')
-        other_crime = request.POST.get('otherCrime')
+        crime_name = request.POST.get('crimeName')
         description = request.POST.get('crimeDescription')
         name = request.POST.get('donation-name')
         email = request.POST.get('donation-email')

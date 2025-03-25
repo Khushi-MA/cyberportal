@@ -70,8 +70,7 @@ class FIR(models.Model):
     
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     crime_type = models.CharField(max_length=10, choices=CRIME_TYPES)
-    crime_category = models.CharField(max_length=20, choices=CRIME_CATEGORIES)
-    other_crime = models.CharField(max_length=100, blank=True)
+    crime_name = models.CharField(max_length=20, choices=CRIME_CATEGORIES)
     description = models.TextField()
     name = models.CharField(max_length=100)
     email = models.EmailField()
