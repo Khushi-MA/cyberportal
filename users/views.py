@@ -115,8 +115,7 @@ def register_fir(request):
         fir = FIR(
             user=request.user,
             crime_type=crime_type,
-            crime_category=crime_category,
-            other_crime=other_crime,
+            crime_name=crime_name,
             description=description,
             name=name,
             email=email,
