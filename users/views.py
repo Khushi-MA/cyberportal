@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from .models import CustomUser, NewsletterSubscriber, validate_password_strength
+from .models import CustomUser, NewsletterSubscriber, validate_password_strength, FIR # Import FIR model
 from django.core.exceptions import ValidationError
 import logging
 
@@ -100,19 +100,31 @@ def logout_view(request):
     logout(request)
     return redirect('home')
 
-@login_required
+@login_required(login_url='user_login')
 def register_fir(request):
     if request.method == 'POST':
         # Handle form submission
         crime_type = request.POST.get('crimeType')
-        crime = request.POST.get('flexRadioDefault')
+        crime_category = request.POST.get('flexRadioDefault')
         other_crime = request.POST.get('otherCrime')
         description = request.POST.get('crimeDescription')
         name = request.POST.get('donation-name')
         email = request.POST.get('donation-email')
         citizenship = request.POST.get('DonationPayment')
         
-        # Add your logic to save the FIR
+        # Create and save the FIR object
+        fir = FIR(
+            user=request.user,
+            crime_type=crime_type,
+            crime_category=crime_category,
+            other_crime=other_crime,
+            description=description,
+            name=name,
+            email=email,
+            citizenship=citizenship
+        )
+        fir.save()
+        
         # Redirect after successful submission
         return redirect('home')
         
