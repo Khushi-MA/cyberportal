@@ -44,9 +44,10 @@ class CustomUser(AbstractUser):
     )
 
     def save(self, *args, **kwargs):
-        if self.password:
+        # Only validate password strength, don't hash it again
+        if self.password and not self.password.startswith(('pbkdf2_sha256$', 'bcrypt$', 'argon2')):
             validate_password_strength(self.password)
-            self.password = make_password(self.password)
+            # Let Django's create_user handle the hashing
         super().save(*args, **kwargs)
 
 # Newsletter Subscriber Model

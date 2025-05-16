@@ -26,46 +26,33 @@ def home(request):
 def user_login(request):
     if request.user.is_authenticated:
         return redirect('home')
-        
+    
+    form = AuthenticationForm()
+    context = {'form': form}
+    
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        logger.info(f"Login attempt with data: {request.POST}")
-        
         email = request.POST.get('username')
         password = request.POST.get('password')
         
-        # Validate email format
+        # Basic email validation
         if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
-            form.add_error('username', 'Please enter a valid email address')
-            return render(request, 'user_login.html', {'form': form})
+            context['email_error'] = 'Please enter a valid email address'
+            return render(request, 'user_login.html', context)
         
-        # Validate password
-        try:
-            validate_password_strength(password)
-        except ValidationError as e:
-            form.add_error('password', e.messages)
-            return render(request, 'user_login.html', {'form': form})
+        # Try to authenticate
+        user = authenticate(request, username=email, password=password)
         
-        if form.is_valid():
-            email = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            logger.info(f"Form is valid, attempting to authenticate user: {email}")
-            
-            user = authenticate(request, username=email, password=password)
-
-            if user is not None:
-                logger.info(f"User {email} authenticated successfully")
-                login(request, user)
-                return redirect('home')
-            else:
-                logger.error("Authentication failed")
-                form.add_error(None, "Invalid password")
+        if user is not None:
+            login(request, user)
+            logger.info(f"User {email} authenticated successfully")
+            return redirect('home')
         else:
-            logger.error(f"Form validation failed. Errors: {form.errors}")
-    else:
-        form = AuthenticationForm()
+            # If authentication fails, add error to context
+            logger.error(f"Authentication failed for email: {email}")
+            context['error'] = 'Invalid email or password'
+            return render(request, 'user_login.html', context)
     
-    return render(request, 'user_login.html', {'form': form})
+    return render(request, 'user_login.html', context)
 
 def user_register(request):
     if request.method == 'POST':

@@ -28,39 +28,29 @@
           <!-- form starts here -->
           <form method="post" novalidate class="needs-validation">
             {% csrf_token %}
-            {% if form.non_field_errors %}
+            {% if error %}
             <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-                {% if "Email not registered" in form.non_field_errors.0 %}
-                <div class="mt-2">
-                    <a href="{% url 'user_register' %}" class="btn btn-outline-primary">Sign Up Now</a>
-                </div>
-                {% endif %}
+                {{ error }}
             </div>
             {% endif %}
             <div class="mb-3">
                 <label for="id_username" class="form-label">Email</label>
                 <input type="email" name="username" class="form-control" id="id_username" 
-                       pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
-                       title="Please enter a valid email address"
-                       required>
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" 
+                    title="Please enter a valid email address"
+                    required>
                 <div class="invalid-feedback">
                     Please enter a valid email address.
                 </div>
-                {% if form.username.errors %}
+                {% if email_error %}
                 <div class="text-danger">
-                    {{ form.username.errors }}
+                    {{ email_error }}
                 </div>
                 {% endif %}
             </div>
             <div class="mb-3">
                 <label for="id_password" class="form-label">Password</label>
-                <input type="password" name="password" class="form-control" id="id_password" 
-                       pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                       title="Must contain at least one number, one uppercase and lowercase letter, one special character, and at least 8 characters"
-                       required>
+                <input type="password" name="password" class="form-control" id="id_password" required>
                 <div class="invalid-feedback" id="password-requirements">
                     Password must contain:
                     <ul>
@@ -101,8 +91,8 @@
         }
 
         function validatePassword(password) {
-            const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-            return re.test(password);
+            // For login, we only need to make sure the password isn't empty
+            return password.length > 0;
         }
 
         form.addEventListener('submit', function(event) {

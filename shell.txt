@@ -1,0 +1,42 @@
+python manage.py shell
+
+# user:
+# Import the model
+from users.models import CustomUser
+
+# Get all users
+users = CustomUser.objects.all()
+
+# Display all users
+for user in users:
+    print(f"ID: {user.id}, Username: {user.username}, Email: {user.email}, Phone: {user.phone_number}")
+
+# Count users
+print(f"Total users: {users.count()}")
+
+
+# FIR records
+# Import the model
+from users.models import FIR
+
+# Get all FIRs
+firs = FIR.objects.all()
+
+# Display all FIRs
+for fir in firs:
+    print(f"ID: {fir.id}, User: {fir.user.email}, Crime Type: {fir.crime_type}, Crime Name: {fir.crime_name}")
+    print(f"  Name: {fir.name}, Email: {fir.email}, Created at: {fir.created_at}")
+    print(f"  Description: {fir.description[:50]}...")
+
+# Count FIRs
+print(f"Total FIRs: {firs.count()}")
+
+
+
+# Others:
+from django.core import serializers
+import json
+
+# Serialize and print any model (example with CustomUser)
+data = serializers.serialize('json', CustomUser.objects.all())
+print(json.dumps(json.loads(data), indent=4))
